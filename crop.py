@@ -1,6 +1,7 @@
 import cv2
 import os
 import pytesseract
+import string
 
 def filter_black(image):
     # Chỉ giữ lại màu đen và loại bỏ mọi màu khác
