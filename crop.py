@@ -43,8 +43,13 @@ def crop_and_save_characters(image_folder, output_folder):
             # Cắt và lưu từng chữ cái vào thư mục đầu ra
             character = black_image[:, start_col:end_col]
             char_label = f"{image_file.split('.')[0]}_{i}"
-            char_name = detect_text(character)
+            resultz = detect_text(character)
 
+            char_name = resultz[0] if resultz else ''
+
+            if char_name in string.ascii_lowercase:
+                char_name = '_' + char_name
+                
             char_folder = os.path.join(output_folder, char_name)
             if not os.path.exists(char_folder):
                 os.makedirs(char_folder)
