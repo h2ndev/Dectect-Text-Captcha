@@ -1,11 +1,21 @@
 import cv2
 import os
+import pytesseract
 
 def filter_black(image):
     # Chỉ giữ lại màu đen và loại bỏ mọi màu khác
     _, binary_image = cv2.threshold(image, 1, 255, cv2.THRESH_BINARY)
 
     return binary_image
+
+def detect_text(image):
+    black_image = filter_black(image)
+
+    # Nhận dạng chữ cái bằng pytesseract
+    result = pytesseract.image_to_string(black_image, config='--psm 8 --oem 3 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
+
+    # In kết quả
+    return result.strip()
 
 def crop_and_save_characters(image_folder, output_folder):
     # Lấy danh sách tất cả các tệp ảnh trong thư mục
@@ -33,8 +43,9 @@ def crop_and_save_characters(image_folder, output_folder):
             # Cắt và lưu từng chữ cái vào thư mục đầu ra
             character = black_image[:, start_col:end_col]
             char_label = f"{image_file.split('.')[0]}_{i}"
+            char_name = detect_text(character)
 
-            char_folder = os.path.join(output_folder)
+            char_folder = os.path.join(output_folder, char_name)
             if not os.path.exists(char_folder):
                 os.makedirs(char_folder)
 
